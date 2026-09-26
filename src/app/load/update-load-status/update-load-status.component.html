@@ -1,0 +1,62 @@
+<div *ngIf="message" class="toast-message">
+  {{ message }}
+</div>
+<div class="update-status-page">
+
+  <div class="status-card">
+
+    <h2>Update Load Status</h2>
+
+    <p class="subtitle">
+      Select a load and update its current status
+    </p>
+
+    <div class="form-group">
+
+      <label for="load">Select Load</label>
+
+        <select
+        id="load"
+        [(ngModel)]="selectedLoadId">
+            <option [ngValue]="null">
+            -- Select Load --
+            </option>
+
+            <option
+            *ngFor="let load of loads"
+            [value]="load.id">
+
+            {{ load.load_number }} - {{ load.customer_name }}
+
+            </option>
+
+  </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="status">New Status</label>
+
+        <select
+        id="status"
+        [(ngModel)]="selectedStatus">
+        <option value="">-- Select Status --</option>
+        <option value="CREATED">CREATED</option>
+        <option value="TENDERED">TENDERED</option>
+        <option value="ACCEPTED">ACCEPTED</option>
+        <option value="IN_TRANSIT">IN TRANSIT</option>
+        <option value="DELIVERED">DELIVERED</option>
+      </select>
+
+    </div>
+
+    <button
+        type="button"
+        (click)="updateStatus()">
+        Update Status
+    </button>
+
+  </div>
+
+</div>

@@ -1,0 +1,88 @@
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background-image:
+    linear-gradient(rgba(137, 166, 207, 0.85), rgba(31, 41, 55, 0.85)),
+    url('/assets/sidebar-truck.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: white;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  
+  
+}
+
+
+.sidebar-truck-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  width: 45px;
+  height: 45px;
+
+  object-fit: contain;
+}
+
+.sidebar-header {
+  padding: 25px 20px;
+  border-bottom: 1px solid #374151;
+  position: relative;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.sidebar-header span {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #030915;
+}
+
+.sidebar-menu {
+  padding: 20px 12px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 13px 15px;
+  margin-bottom: 8px;
+
+  color: #d1d5db;
+  text-decoration: none;
+
+  border-radius: 6px;
+
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #374151;
+  color: white;
+}
+
+.menu-item.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+.menu-icon {
+  width: 24px;
+  text-align: center;
+  font-size: 20px;
+}

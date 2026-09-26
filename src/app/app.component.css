@@ -1,0 +1,23 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  /* background-color: #f5f7fa; */
+}
+
+app-side-bar {
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  background-image:
+  linear-gradient(rgba(237, 242, 243, 0.85),rgba(237, 242, 243, 0.85)),
+  url('/assets/tms-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+}

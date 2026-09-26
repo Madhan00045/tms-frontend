@@ -1,0 +1,57 @@
+<div class="sidebar">
+
+  <div class="sidebar-header">
+    <h2>TMS</h2>
+    <span>Transport Management</span>
+      <img
+      src="assets/tms-truck3.svg"
+      alt="TMS"
+      class="sidebar-truck-icon"
+    >
+  </div>
+
+  <nav class="sidebar-menu">
+
+    <a routerLink="/dashboard"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="menu-item">
+
+      <span class="menu-icon">⌂</span>
+      <span>Dashboard</span>
+
+    </a>
+
+    <a routerLink="/loads"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="menu-item">
+
+      <span class="menu-icon">▤</span>
+      <span>Load List</span>
+
+    </a>
+
+    <a routerLink="/loads/create"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="menu-item">
+
+      <span class="menu-icon">＋</span>
+      <span>Create Load</span>
+
+    </a>
+
+    <a routerLink="loads/update-status"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="menu-item">
+
+      <span class="menu-icon">↻</span>
+      <span>Update Load Status</span>
+
+    </a>
+
+  </nav>
+
+</div>

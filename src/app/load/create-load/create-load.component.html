@@ -1,0 +1,162 @@
+<div class="load-page">
+
+    <!-- Toast message -->
+    <div *ngIf="message" class="toast-message">
+      {{ message }}
+    </div>
+
+  <div class="load-container">
+
+    <h1>Create Load</h1>
+
+    <p *ngIf="message" class="message">
+      {{ message }}
+    </p>
+
+    <form
+      [formGroup]="loadForm"
+      (ngSubmit)="createLoad()">
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label>Load Number</label>
+
+          <input
+            type="text" class="form-input-field"
+            formControlName="loadNumber"
+            placeholder="LOAD1006">
+        </div>
+
+        <div class="form-group">
+          <label>BOL Number</label>
+
+          <input
+            type="text" class="form-input-field"
+            formControlName="bolNumber"
+            placeholder="BOL10006">
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <!-- <label>Customer ID</label> -->
+
+            <label>Customer</label>
+
+            <select class="form-input-field" formControlName="customerId">
+            <option value="">Select Customer</option>
+
+            <option
+                *ngFor="let customer of customers"
+                [value]="customer.id">
+
+                {{ customer.companyName }}
+
+            </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+        <label>Carrier</label>
+
+        <select  class="form-input-field" formControlName="carrierId">
+        <option value="">Select Carrier</option>
+
+        <option
+            *ngFor="let carrier of carriers"
+            [value]="carrier.id">
+            {{ carrier.carrierName }}
+        </option>
+        </select>
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label>Pickup Location</label>
+
+          <input
+            type="text" class="form-input-field"
+            formControlName="pickupLocation"
+            placeholder="Chennai">
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Location</label>
+
+          <input
+            type="text" class="form-input-field"
+            formControlName="deliveryLocation"
+            placeholder="Bangalore">
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label>Pickup Date</label>
+
+          <input
+            type="date" class="form-input-field"
+            formControlName="pickupDate">
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Date</label>
+
+          <input class="form-input-field"
+            type="date"
+            formControlName="deliveryDate">
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label>Weight</label>
+
+          <input
+            type="number" class="form-input-field"
+            formControlName="weight"
+            placeholder="1200.50">
+        </div>
+
+        <div class="form-group">
+          <label>Pieces</label>
+
+          <input
+            type="number" class="form-input-field"
+            formControlName="pieces"
+            placeholder="20">
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label>Status</label>
+
+        <select class="form-input-field" formControlName="status">
+          <option value="CREATED">Created</option>
+          <option value="TENDERED">Tendered</option>
+          <option value="ACCEPTED">Accepted</option>
+          <option value="IN_TRANSIT">In Transit</option>
+          <option value="DELIVERED">Delivered</option>
+        </select>
+      </div>
+
+      <button type="submit">
+        Create Load
+      </button>
+
+    </form>
+
+  </div>
+
+</div>

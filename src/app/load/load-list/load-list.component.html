@@ -1,0 +1,81 @@
+<div class="load-container">
+
+  <h1>Load List</h1>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Load Number</th>
+        <th>Customer</th>
+        <th>Carrier</th>
+        <th>BOL Number</th>
+        <th>Pickup</th>
+        <th>Delivery</th>
+        <th>Pickup Date</th>
+        <th>Delivery Date</th>
+        <th>Weight</th>
+        <th>Pieces</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let load of loads">
+
+        <td>{{ load.load_number }}</td>
+
+        <td>{{ load.customer_name }}</td>
+
+        <td>{{ load.carrier_name }}</td>
+
+        <td>{{ load.bol_number }}</td>
+
+        <td>{{ load.pickup_location }}</td>
+
+        <td>{{ load.delivery_location }}</td>
+
+        <td>{{ load.pickup_date }}</td>
+
+        <td>{{ load.delivery_date }}</td>
+
+        <td>{{ load.weight }}</td>
+
+        <td>{{ load.pieces }}</td>
+
+        <td>{{ load.status }}</td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+  <div class="pagination">
+
+    <button
+        (click)="previousPage()"
+        [disabled]="currentPage === 0">
+
+        Previous
+
+    </button>
+
+    <span>
+        Page {{ currentPage + 1 }}
+        of
+        {{ totalPages }}
+    </span>
+
+    <button
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages - 1">
+
+        Next
+
+    </button>
+
+</div>
+
+
+</div>

@@ -1,0 +1,41 @@
+<div class="login-page">
+
+  <div class="login-card">
+
+    <h1>TMS Portal</h1>
+
+    <p class="subtitle">
+      Transportation Management System
+    </p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+
+      <div class="form-group">
+        <label>Username</label>
+        <input
+          type="text"
+          formControlName="username"
+          placeholder="Enter username">
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Enter password">
+      </div>
+
+      <button type="submit">
+        Login
+      </button>
+
+      <p *ngIf="message" class="message">
+        {{ message }}
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
