@@ -1,0 +1,101 @@
+<div class="form-page-container">
+
+  <!-- Toast Notifications -->
+  <div *ngIf="message" class="toast-message success">
+    {{ message }}
+  </div>
+  <div *ngIf="errorMessage" class="toast-message error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="form-card">
+
+    <div class="card-header">
+      <h1>Create Carrier</h1>
+      <p class="subtitle">Add a new carrier to master data</p>
+    </div>
+
+    <form [formGroup]="carrierForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="carrierCode">Carrier Code <span class="required">*</span></label>
+          <input
+            id="carrierCode"
+            type="text"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('carrierCode')"
+            formControlName="carrierCode"
+            placeholder="e.g. CAR006">
+          <div *ngIf="isFieldInvalid('carrierCode')" class="error-text">
+            Carrier Code is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="carrierName">Carrier Name <span class="required">*</span></label>
+          <input
+            id="carrierName"
+            type="text"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('carrierName')"
+            formControlName="carrierName"
+            placeholder="e.g. Swift Transportation">
+          <div *ngIf="isFieldInvalid('carrierName')" class="error-text">
+            Carrier Name is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="contactName">Contact Name</label>
+          <input
+            id="contactName"
+            type="text"
+            class="form-control"
+            formControlName="contactName"
+            placeholder="e.g. Jane Smith">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input
+            id="phone"
+            type="text"
+            class="form-control"
+            formControlName="phone"
+            placeholder="e.g. +1 555-4321">
+        </div>
+      </div>
+
+      <div class="form-row single-column">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('email')"
+            formControlName="email"
+            placeholder="e.g. dispatch@carrier.com">
+          <div *ngIf="isFieldInvalid('email')" class="error-text">
+            Please enter a valid email address
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="goBack()">
+          Back
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting">
+          {{ submitting ? 'Creating...' : 'Create Carrier' }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

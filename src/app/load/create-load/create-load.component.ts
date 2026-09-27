@@ -27,29 +27,16 @@ export class CreateLoadComponent implements OnInit {
   ngOnInit(): void {
 
     this.loadForm = this.formBuilder.group({
-
-      loadNumber: ['', Validators.required],
-
       customerId: ['', Validators.required],
-
       carrierId: ['', Validators.required],
-
       bolNumber: ['', Validators.required],
-
       pickupLocation: ['', Validators.required],
-
       deliveryLocation: ['', Validators.required],
-
       pickupDate: ['', Validators.required],
-
       deliveryDate: ['', Validators.required],
-
       weight: ['', Validators.required],
-
       pieces: ['', Validators.required],
-
       status: ['CREATED', Validators.required]
-
     });
     this.loadCustomers();
     this.loadCarriers();
@@ -66,14 +53,20 @@ export class CreateLoadComponent implements OnInit {
       .createLoad(this.loadForm.value)
       .subscribe({
 
-        next: (response) => {
-
+        next: (response: any) => {
           console.log('Load created:', response);
 
-          this.message = 'Load created successfully';
+          if (response && response.loadNumber) {
+            this.message = `Load created successfully with Load Number: ${response.loadNumber}`;
+          } else if (response && response.message) {
+            this.message = response.message;
+          } else {
+            this.message = 'Load created successfully';
+          }
+
           setTimeout(() => {
             this.message = '';
-          }, 3000);
+          }, 4000);
 
           this.loadForm.reset({
             status: 'CREATED'

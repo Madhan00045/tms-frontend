@@ -1,0 +1,148 @@
+<div class="edit-load-container">
+
+  <!-- Toast Notifications -->
+  <div *ngIf="message" class="toast-message success">
+    {{ message }}
+  </div>
+  <div *ngIf="errorMessage" class="toast-message error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="header-section">
+    <h1>Edit Load</h1>
+    <!-- <p class="subtitle">Review load information and update status</p> -->
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading load details...</p>
+  </div>
+
+  <!-- Error State when Load not found -->
+  <div *ngIf="!loading && !load" class="glass-card error-card">
+    <h3>Load Not Found</h3>
+    <p>{{ errorMessage || 'The requested load could not be found or has been deleted.' }}</p>
+    <button type="button" class="btn btn-secondary" (click)="goBack()">
+      Back to Load List
+    </button>
+  </div>
+
+  <!-- Load Content -->
+  <div *ngIf="!loading && load" class="content-wrapper">
+
+    <!-- Read-Only Information Card -->
+    <div class="glass-card info-card">
+      <div class="card-header">
+        <h2>Load Information</h2>
+        <span class="badge read-only-badge">Read-Only</span>
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-item">
+          <label>Load Number</label>
+          <div class="info-value font-mono">{{ load.load_number }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>BOL Number</label>
+          <div class="info-value font-mono">{{ load.bol_number || 'N/A' }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Customer</label>
+          <div class="info-value">{{ load.customer_name }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Carrier</label>
+          <div class="info-value">{{ load.carrier_name }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Pickup Location</label>
+          <div class="info-value">{{ load.pickup_location }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Delivery Location</label>
+          <div class="info-value">{{ load.delivery_location }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Pickup Date</label>
+          <div class="info-value">{{ load.pickup_date || 'N/A' }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Delivery Date</label>
+          <div class="info-value">{{ load.delivery_date || 'N/A' }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Weight</label>
+          <div class="info-value">{{ load.weight ? (load.weight + ' lbs') : 'N/A' }}</div>
+        </div>
+
+        <div class="info-item">
+          <label>Pieces</label>
+          <div class="info-value">{{ load.pieces != null ? load.pieces : 'N/A' }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Editable Fields Card -->
+    <div class="glass-card edit-card">
+      <div class="card-header">
+        <h2>Editable Fields</h2>
+        <span class="badge editable-badge">Editable</span>
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group">
+          <label for="loadStatus">Load Status <span class="required">*</span></label>
+          <select id="loadStatus" [(ngModel)]="status" class="form-select">
+            <option *ngFor="let opt of loadStatusOptions" [value]="opt">
+              {{ opt }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="paymentStatus">Payment Status <span class="required">*</span></label>
+          <select id="paymentStatus" [(ngModel)]="paymentStatus" class="form-select">
+            <option *ngFor="let opt of paymentStatusOptions" [value]="opt">
+              {{ opt }}
+            </option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-footer">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="goBack()"
+        [disabled]="saving">
+        Back
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="updateLoad()"
+        [disabled]="saving">
+        <span *ngIf="saving">Updating...</span>
+        <span *ngIf="!saving">Update</span>
+      </button>
+    </div>
+
+  </div>
+
+</div>

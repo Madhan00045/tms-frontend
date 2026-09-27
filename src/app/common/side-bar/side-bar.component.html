@@ -42,7 +42,27 @@
 
     </a>
 
-    <a routerLink="loads/update-status"
+
+
+    <a routerLink="/customers"
+       routerLinkActive="active"
+       class="menu-item">
+
+      <span class="menu-icon">👥</span>
+      <span>Customers</span>
+
+    </a>
+
+    <a routerLink="/carriers"
+       routerLinkActive="active"
+       class="menu-item">
+
+      <span class="menu-icon">🚚</span>
+      <span>Carriers</span>
+
+    </a>
+
+        <a routerLink="/loads/update-status"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{ exact: true }"
        class="menu-item">

@@ -1,0 +1,118 @@
+<div class="form-page-container">
+
+  <!-- Toast Notifications -->
+  <div *ngIf="message" class="toast-message success">
+    {{ message }}
+  </div>
+  <div *ngIf="errorMessage" class="toast-message error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="form-card">
+
+    <div class="card-header">
+      <div class="title-with-badge">
+        <h1>Edit Customer</h1>
+        <span *ngIf="customer" class="id-badge">ID: {{ customer.id }}</span>
+      </div>
+      <p class="subtitle">Modify customer information</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <p>Loading customer details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && !customer" class="error-state">
+      <p>{{ errorMessage || 'Customer not found.' }}</p>
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Back to Customers
+      </button>
+    </div>
+
+    <!-- Edit Form -->
+    <form *ngIf="!loading && customer" [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customerCode">Customer Code <span class="required">*</span></label>
+          <input
+            id="customerCode"
+            type="text"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('customerCode')"
+            formControlName="customerCode"
+            placeholder="e.g. CUST001">
+          <div *ngIf="isFieldInvalid('customerCode')" class="error-text">
+            Customer Code is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="companyName">Company Name <span class="required">*</span></label>
+          <input
+            id="companyName"
+            type="text"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('companyName')"
+            formControlName="companyName"
+            placeholder="e.g. ABC Manufacturing">
+          <div *ngIf="isFieldInvalid('companyName')" class="error-text">
+            Company Name is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="contactName">Contact Name</label>
+          <input
+            id="contactName"
+            type="text"
+            class="form-control"
+            formControlName="contactName"
+            placeholder="e.g. John Doe">
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input
+            id="phone"
+            type="text"
+            class="form-control"
+            formControlName="phone"
+            placeholder="e.g. +1 555-1234">
+        </div>
+      </div>
+
+      <div class="form-row single-column">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('email')"
+            formControlName="email"
+            placeholder="e.g. contact@abc.com">
+          <div *ngIf="isFieldInvalid('email')" class="error-text">
+            Please enter a valid email address
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="goBack()">
+          Back
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="submitting">
+          {{ submitting ? 'Updating...' : 'Update' }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

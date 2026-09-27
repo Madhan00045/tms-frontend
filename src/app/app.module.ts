@@ -15,6 +15,13 @@ import { CreateLoadComponent } from './load/create-load/create-load.component';
 import { LoadListComponent } from './load/load-list/load-list.component';
 import { SideBarComponent } from './common/side-bar/side-bar.component';
 import { UpdateLoadStatusComponent } from './load/update-load-status/update-load-status.component';
+import { EditLoadComponent } from './load/edit-load/edit-load.component';
+import { CustomerListComponent } from './customer/customer-list/customer-list.component';
+import { CustomerCreateComponent } from './customer/customer-create/customer-create.component';
+import { CustomerEditComponent } from './customer/customer-edit/customer-edit.component';
+import { CarrierListComponent } from './carrier/carrier-list/carrier-list.component';
+import { CarrierCreateComponent } from './carrier/carrier-create/carrier-create.component';
+import { CarrierEditComponent } from './carrier/carrier-edit/carrier-edit.component';
 
 
 @NgModule({
@@ -25,7 +32,14 @@ import { UpdateLoadStatusComponent } from './load/update-load-status/update-load
     CreateLoadComponent,
     LoadListComponent,
     SideBarComponent,
-    UpdateLoadStatusComponent
+    UpdateLoadStatusComponent,
+    EditLoadComponent,
+    CustomerListComponent,
+    CustomerCreateComponent,
+    CustomerEditComponent,
+    CarrierListComponent,
+    CarrierCreateComponent,
+    CarrierEditComponent
   ],
   imports: [
     BrowserModule,

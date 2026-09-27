@@ -1,0 +1,271 @@
+<div class="customer-container">
+
+  <!-- Toast Notifications -->
+  <div *ngIf="message" class="toast-message success">
+    {{ message }}
+  </div>
+  <div *ngIf="errorMessage" class="toast-message error">
+    {{ errorMessage }}
+  </div>
+
+  <div class="header-section">
+    <div class="title-row">
+      <h1>Customer List</h1>
+      <button type="button" class="btn-create" (click)="createCustomer()" title="Create New Customer">
+        + Create Customer
+      </button>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="search-filter-bar">
+
+      <!-- Search Input Group -->
+      <div class="search-group">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          placeholder="Search customers..."
+          aria-label="Search customers">
+        <button
+          type="button"
+          class="action-btn-search"
+          (click)="onSearch()"
+          title="Search">
+          Search
+        </button>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="filter-actions-group">
+        <button
+          type="button"
+          class="action-btn-add-filter"
+          (click)="addFilter()"
+          [disabled]="filters.length >= maxFilters"
+          title="Add a filter (up to 3)">
+          + Add Filter
+        </button>
+
+        <button
+          *ngIf="filters.length > 0"
+          type="button"
+          class="filter-apply-btn"
+          (click)="applyFilters()"
+          title="Apply filters">
+          Apply Filter
+        </button>
+
+        <!-- Reset Button -->
+        <button
+          *ngIf="searchTerm || filters.length > 0"
+          type="button"
+          class="reset-btn"
+          (click)="resetSearchAndFilter()"
+          title="Reset search and filters">
+          Reset
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Active Filters List (0 to 3) -->
+    <div *ngIf="filters.length > 0" class="active-filters-container">
+      <div *ngFor="let filter of filters; let i = index" class="filter-row-item">
+        <span class="filter-index-badge">Filter {{ i + 1 }}:</span>
+
+        <!-- Filter Field Dropdown -->
+        <select
+          class="filter-dropdown"
+          [(ngModel)]="filter.field"
+          (change)="onFilterFieldChange(filter)"
+          aria-label="Select filter field">
+          <option value="">Select Field ▼</option>
+          <option
+            *ngFor="let opt of availableFilterFields"
+            [value]="opt.value"
+            [disabled]="isFieldDisabled(opt.value, i)">
+            {{ opt.label }}
+          </option>
+        </select>
+
+        <!-- Dynamic Filter Value: Text Inputs -->
+        <div *ngIf="filter.field" class="filter-text-group">
+          <input
+            type="text"
+            class="filter-text-input"
+            [(ngModel)]="filter.value"
+            (keyup.enter)="applyFilters()"
+            [placeholder]="'Enter ' + getFieldLabel(filter.field) + '...'"
+            aria-label="Filter value">
+        </div>
+
+        <!-- Placeholder when field not selected -->
+        <div *ngIf="!filter.field" class="filter-text-group">
+          <input
+            type="text"
+            class="filter-text-input"
+            disabled
+            placeholder="Select field first...">
+        </div>
+
+        <!-- Remove Filter Button -->
+        <button
+          type="button"
+          class="filter-remove-btn"
+          (click)="removeFilter(i)"
+          title="Remove this filter">
+          Remove
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Table Container -->
+  <div class="table-container">
+    <table>
+
+      <thead>
+        <tr>
+          <th class="actions-header">Actions</th>
+          <th>Customer Code</th>
+          <th>Company Name</th>
+          <th>Contact Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let customer of customers">
+
+          <td class="actions-cell">
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="action-btn edit-btn"
+                (click)="editCustomer(customer)"
+                title="Edit Customer"
+                aria-label="Edit Customer">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn delete-btn"
+                (click)="deleteCustomer(customer)"
+                title="Delete Customer"
+                aria-label="Delete Customer">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </td>
+
+          <td><strong>{{ customer.customerCode }}</strong></td>
+          <td>{{ customer.companyName }}</td>
+          <td>{{ customer.contactName || '-' }}</td>
+          <td>{{ customer.phone || '-' }}</td>
+          <td>{{ customer.email || '-' }}</td>
+
+        </tr>
+
+        <!-- Empty state when no customers match -->
+        <tr *ngIf="customers.length === 0">
+          <td colspan="6" class="no-records-cell">
+            <div class="no-records-content">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>No customers found.</span>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+
+    <!-- Items per page control -->
+    <div class="items-per-page-container">
+      <label for="customerItemsPerPageSelect" class="items-per-page-label">Items per page:</label>
+      <select
+        id="customerItemsPerPageSelect"
+        class="items-per-page-select"
+        [(ngModel)]="pageSize"
+        (ngModelChange)="onPageSizeChange()"
+        aria-label="Items per page">
+        <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
+          {{ size }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="pagination-nav">
+      <button
+        type="button"
+        (click)="previousPage()"
+        [disabled]="currentPage === 0">
+        Previous
+      </button>
+
+      <span>
+        Page {{ totalPages > 0 ? currentPage + 1 : 0 }}
+        of
+        {{ totalPages }}
+      </span>
+
+      <button
+        type="button"
+        (click)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1 || totalPages === 0">
+        Next
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div *ngIf="customerToDelete" class="modal-backdrop" (click)="cancelDelete()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this customer?</p>
+        <p class="modal-info">
+          Customer Code: <strong>{{ customerToDelete.customerCode }}</strong><br>
+          Company: <strong>{{ customerToDelete.companyName }}</strong>
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn btn-cancel" (click)="cancelDelete()">
+          Cancel
+        </button>
+        <button type="button" class="modal-btn btn-delete" (click)="confirmDelete()">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

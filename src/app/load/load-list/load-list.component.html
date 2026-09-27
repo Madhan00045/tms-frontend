@@ -1,81 +1,480 @@
 <div class="load-container">
 
-  <h1>Load List</h1>
+  <!-- Toast Notifications -->
+  <div *ngIf="message" class="toast-message success">
+    {{ message }}
+  </div>
+  <div *ngIf="errorMessage" class="toast-message error">
+    {{ errorMessage }}
+  </div>
 
-  <table>
+  <div class="header-section">
+    <h1>Load List</h1>
 
-    <thead>
-      <tr>
-        <th>Load Number</th>
-        <th>Customer</th>
-        <th>Carrier</th>
-        <th>BOL Number</th>
-        <th>Pickup</th>
-        <th>Delivery</th>
-        <th>Pickup Date</th>
-        <th>Delivery Date</th>
-        <th>Weight</th>
-        <th>Pieces</th>
-        <th>Status</th>
-      </tr>
-    </thead>
+    <!-- Search & Filter Bar -->
+    <div class="search-filter-bar">
 
-    <tbody>
+      <!-- Search Input Group -->
+      <div class="search-group">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          placeholder="Search loads..."
+          aria-label="Search loads">
+        <button
+          type="button"
+          class="action-btn-search"
+          (click)="onSearch()"
+          title="Search">
+          Search
+        </button>
+      </div>
 
-      <tr *ngFor="let load of loads">
+      <!-- Action buttons -->
+      <div class="filter-actions-group">
+        <button
+          type="button"
+          class="action-btn-add-filter"
+          (click)="addFilter()"
+          [disabled]="filters.length >= maxFilters"
+          title="Add a filter (up to 3)">
+          + Add Filter
+        </button>
 
-        <td>{{ load.load_number }}</td>
+        <button
+          *ngIf="filters.length > 0"
+          type="button"
+          class="filter-apply-btn"
+          (click)="applyFilters()"
+          title="Apply filters">
+          Apply Filter
+        </button>
 
-        <td>{{ load.customer_name }}</td>
+        <!-- Reset Button -->
+        <button
+          *ngIf="searchTerm || filters.length > 0"
+          type="button"
+          class="reset-btn"
+          (click)="resetSearchAndFilter()"
+          title="Reset search and filters">
+          Reset
+        </button>
+      </div>
 
-        <td>{{ load.carrier_name }}</td>
+    </div>
 
-        <td>{{ load.bol_number }}</td>
+    <!-- Active Filters List (0 to 3) -->
+    <div *ngIf="filters.length > 0" class="active-filters-container">
+      <div *ngFor="let filter of filters; let i = index" class="filter-row-item">
+        <span class="filter-index-badge">Filter {{ i + 1 }}:</span>
 
-        <td>{{ load.pickup_location }}</td>
+        <!-- Filter Field Dropdown -->
+        <select
+          class="filter-dropdown"
+          [(ngModel)]="filter.field"
+          (change)="onFilterFieldChange(filter)"
+          aria-label="Select filter field">
+          <option value="">Select Field ▼</option>
+          <option
+            *ngFor="let opt of availableFilterFields"
+            [value]="opt.value"
+            [disabled]="isFieldDisabled(opt.value, i)">
+            {{ opt.label }}
+          </option>
+        </select>
 
-        <td>{{ load.delivery_location }}</td>
+        <!-- Dynamic Filter Value: Status -->
+        <select
+          *ngIf="filter.field === 'status'"
+          class="filter-val-dropdown"
+          [(ngModel)]="filter.value"
+          (change)="applyFilters()"
+          aria-label="Filter status value">
+          <option value="">-- All Statuses --</option>
+          <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+        </select>
 
-        <td>{{ load.pickup_date }}</td>
+        <!-- Dynamic Filter Value: Payment Status -->
+        <select
+          *ngIf="filter.field === 'paymentStatus'"
+          class="filter-val-dropdown"
+          [(ngModel)]="filter.value"
+          (change)="applyFilters()"
+          aria-label="Filter payment status value">
+          <option value="">-- All Payments --</option>
+          <option *ngFor="let opt of paymentStatusOptions" [value]="opt">{{ opt }}</option>
+        </select>
 
-        <td>{{ load.delivery_date }}</td>
+        <!-- Dynamic Filter Value: Text Inputs (Load Number, Customer, Carrier) -->
+        <div *ngIf="filter.field === 'loadNumber' || filter.field === 'customer' || filter.field === 'carrier'" class="filter-text-group">
+          <input
+            type="text"
+            class="filter-text-input"
+            [(ngModel)]="filter.value"
+            (keyup.enter)="applyFilters()"
+            [placeholder]="'Enter ' + getFieldLabel(filter.field) + '...'"
+            aria-label="Filter value">
+        </div>
 
-        <td>{{ load.weight }}</td>
+        <!-- Placeholder when field not selected -->
+        <div *ngIf="!filter.field" class="filter-text-group">
+          <input
+            type="text"
+            class="filter-text-input"
+            disabled
+            placeholder="Select field first...">
+        </div>
 
-        <td>{{ load.pieces }}</td>
+        <!-- Remove Filter Button -->
+        <button
+          type="button"
+          class="filter-remove-btn"
+          (click)="removeFilter(i)"
+          title="Remove this filter">
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
 
-        <td>{{ load.status }}</td>
+  <!-- Table Container -->
+  <div class="table-container">
+    <table>
 
-      </tr>
+      <thead>
+        <tr>
+          <th class="actions-header">Actions</th>
+          <th>Load Number</th>
+          <th>Customer</th>
+          <th>Carrier</th>
+          <th>BOL Number</th>
+          <th>Pickup</th>
+          <th>Delivery</th>
+          <th>Pickup Date</th>
+          <th>Delivery Date</th>
+          <th>Weight</th>
+          <th>Pieces</th>
+          <th>Status</th>
+          <th>Payment Status</th>
+        </tr>
+      </thead>
 
-    </tbody>
+      <tbody>
 
-  </table>
+        <tr *ngFor="let load of loads">
+
+          <td class="actions-cell">
+            <div class="action-buttons">
+              <button
+                type="button"
+                class="action-btn edit-btn"
+                (click)="openEditModal(load)"
+                [disabled]="load.status !== 'CREATED'"
+                [title]="load.status === 'CREATED' ? 'Edit Load' : 'Edit is disabled for ' + load.status + ' loads'"
+                aria-label="Edit Load">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn delete-btn"
+                (click)="deleteLoad(load)"
+                title="Delete Load"
+                aria-label="Delete Load">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </td>
+
+          <td>{{ load.load_number }}</td>
+
+          <td>{{ load.customer_name }}</td>
+
+          <td>{{ load.carrier_name }}</td>
+
+          <td>{{ load.bol_number }}</td>
+
+          <td>{{ load.pickup_location }}</td>
+
+          <td>{{ load.delivery_location }}</td>
+
+          <td>{{ load.pickup_date }}</td>
+
+          <td>{{ load.delivery_date }}</td>
+
+          <td>{{ load.weight }}</td>
+
+          <td>{{ load.pieces }}</td>
+
+          <td>
+            <span class="clickable-status" (click)="goToDetails(load.id)" title="View load details">
+              {{ load.status }}
+            </span>
+          </td>
+
+          <td>
+            <span class="clickable-status" (click)="goToDetails(load.id)" title="View load details">
+              {{ load.payment_status || 'UNPAID' }}
+            </span>
+          </td>
+
+        </tr>
+
+        <!-- Empty state when no loads match -->
+        <tr *ngIf="loads.length === 0">
+          <td colspan="13" class="no-records-cell">
+            <div class="no-records-content">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>No loads found.</span>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+  </div>
+
+  <!-- Pagination -->
   <div class="pagination">
 
-    <button
+    <!-- Items per page control -->
+    <div class="items-per-page-container">
+      <label for="itemsPerPageSelect" class="items-per-page-label">Items per page:</label>
+      <select
+        id="itemsPerPageSelect"
+        class="items-per-page-select"
+        [(ngModel)]="pageSize"
+        (ngModelChange)="onPageSizeChange()"
+        aria-label="Items per page">
+        <option *ngFor="let size of pageSizeOptions" [ngValue]="size">
+          {{ size }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="pagination-nav">
+      <button
+        type="button"
         (click)="previousPage()"
         [disabled]="currentPage === 0">
-
         Previous
+      </button>
 
-    </button>
-
-    <span>
-        Page {{ currentPage + 1 }}
+      <span>
+        Page {{ totalPages > 0 ? currentPage + 1 : 0 }}
         of
         {{ totalPages }}
-    </span>
+      </span>
 
-    <button
+      <button
+        type="button"
         (click)="nextPage()"
-        [disabled]="currentPage === totalPages - 1">
-
+        [disabled]="currentPage >= totalPages - 1 || totalPages === 0">
         Next
+      </button>
+    </div>
 
-    </button>
+  </div>
 
-</div>
+  <!-- Delete Confirmation Modal -->
+  <div *ngIf="loadToDelete" class="modal-backdrop" (click)="cancelDelete()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this load?</p>
+        <p class="modal-load-info">
+          Load Number: <strong>{{ loadToDelete.load_number }}</strong>
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn btn-cancel" (click)="cancelDelete()">
+          Cancel
+        </button>
+        <button type="button" class="modal-btn btn-delete" (click)="confirmDelete()">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
 
+  <!-- Edit Load Popup Modal -->
+  <div *ngIf="isEditModalOpen && editingLoad" class="modal-backdrop" (click)="closeEditModal()">
+    <div class="modal-card edit-modal-card" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h3>Edit Load</h3>
+        <button type="button" class="modal-close-btn" (click)="closeEditModal()" aria-label="Close">
+          &times;
+        </button>
+      </div>
+
+      <div *ngIf="editModalError" class="modal-error-alert">
+        {{ editModalError }}
+      </div>
+
+      <div class="modal-body edit-modal-body">
+
+        <!-- Read-only Load Number -->
+        <div class="modal-form-group read-only-group">
+          <label>Load Number <span class="read-only-badge">Read-Only</span></label>
+          <input
+            type="text"
+            class="modal-input read-only-input font-mono"
+            [value]="editingLoad.load_number"
+            readonly
+            tabindex="-1">
+        </div>
+
+        <div class="modal-form-grid">
+
+          <!-- Customer Dropdown -->
+          <div class="modal-form-group">
+            <label for="editCustomer">Customer <span class="required">*</span></label>
+            <select
+              id="editCustomer"
+              class="modal-select"
+              [(ngModel)]="editForm.customerId">
+              <option [ngValue]="0" disabled>Select Customer</option>
+              <option *ngFor="let c of customers" [ngValue]="c.id">
+                {{ c.companyName }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Carrier Dropdown -->
+          <div class="modal-form-group">
+            <label for="editCarrier">Carrier <span class="required">*</span></label>
+            <select
+              id="editCarrier"
+              class="modal-select"
+              [(ngModel)]="editForm.carrierId">
+              <option [ngValue]="0" disabled>Select Carrier</option>
+              <option *ngFor="let cr of carriers" [ngValue]="cr.id">
+                {{ cr.carrierName }}
+              </option>
+            </select>
+          </div>
+
+          <!-- BOL Number -->
+          <div class="modal-form-group">
+            <label for="editBolNumber">BOL Number</label>
+            <input
+              id="editBolNumber"
+              type="text"
+              class="modal-input font-mono"
+              [(ngModel)]="editForm.bolNumber"
+              placeholder="Enter BOL number">
+          </div>
+
+          <!-- Weight -->
+          <div class="modal-form-group">
+            <label for="editWeight">Weight (lbs)</label>
+            <input
+              id="editWeight"
+              type="number"
+              class="modal-input"
+              [(ngModel)]="editForm.weight"
+              placeholder="Weight in lbs"
+              min="0">
+          </div>
+
+          <!-- Pickup Location -->
+          <div class="modal-form-group">
+            <label for="editPickupLoc">Pickup Location <span class="required">*</span></label>
+            <input
+              id="editPickupLoc"
+              type="text"
+              class="modal-input"
+              [(ngModel)]="editForm.pickupLocation"
+              placeholder="Enter pickup location">
+          </div>
+
+          <!-- Delivery Location -->
+          <div class="modal-form-group">
+            <label for="editDeliveryLoc">Delivery Location <span class="required">*</span></label>
+            <input
+              id="editDeliveryLoc"
+              type="text"
+              class="modal-input"
+              [(ngModel)]="editForm.deliveryLocation"
+              placeholder="Enter delivery location">
+          </div>
+
+          <!-- Pickup Date -->
+          <div class="modal-form-group">
+            <label for="editPickupDate">Pickup Date</label>
+            <input
+              id="editPickupDate"
+              type="date"
+              class="modal-input"
+              [(ngModel)]="editForm.pickupDate">
+          </div>
+
+          <!-- Delivery Date -->
+          <div class="modal-form-group">
+            <label for="editDeliveryDate">Delivery Date</label>
+            <input
+              id="editDeliveryDate"
+              type="date"
+              class="modal-input"
+              [(ngModel)]="editForm.deliveryDate">
+          </div>
+
+          <!-- Pieces -->
+          <div class="modal-form-group">
+            <label for="editPieces">Pieces</label>
+            <input
+              id="editPieces"
+              type="number"
+              class="modal-input"
+              [(ngModel)]="editForm.pieces"
+              placeholder="Pieces count"
+              min="0">
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="modal-btn btn-cancel"
+          (click)="closeEditModal()"
+          [disabled]="savingEdit">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="modal-btn btn-update"
+          (click)="saveLoadInfo()"
+          [disabled]="savingEdit">
+          <span *ngIf="savingEdit">Updating...</span>
+          <span *ngIf="!savingEdit">Update</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
 
 </div>
