@@ -22,6 +22,7 @@ import { CustomerEditComponent } from './customer/customer-edit/customer-edit.co
 import { CarrierListComponent } from './carrier/carrier-list/carrier-list.component';
 import { CarrierCreateComponent } from './carrier/carrier-create/carrier-create.component';
 import { CarrierEditComponent } from './carrier/carrier-edit/carrier-edit.component';
+import { TrackingComponent } from './load/tracking/tracking.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { CarrierEditComponent } from './carrier/carrier-edit/carrier-edit.compon
     CustomerEditComponent,
     CarrierListComponent,
     CarrierCreateComponent,
-    CarrierEditComponent
+    CarrierEditComponent,
+    TrackingComponent
   ],
   imports: [
     BrowserModule,

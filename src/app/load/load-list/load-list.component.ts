@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { LoadService, Load, FilterItem, EditLoadInfoRequest } from '../load.service';
 import { CustomerService, Customer } from '../../customer/customer.service';
 import { CarrierService, Carrier } from '../../carrier/carrier.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-load-list',
@@ -76,13 +77,18 @@ export class LoadListComponent implements OnInit {
     private loadService: LoadService,
     private customerService: CustomerService,
     private carrierService: CarrierService,
+    public authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadLoads();
-    this.loadCustomers();
-    this.loadCarriers();
+    if (this.authService.canAccessCustomers()) {
+      this.loadCustomers();
+    }
+    if (this.authService.canAccessCarriers()) {
+      this.loadCarriers();
+    }
   }
 
   loadCustomers(): void {

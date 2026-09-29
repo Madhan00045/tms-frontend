@@ -53,13 +53,26 @@ export class LoginComponent implements OnInit {
 
           this.message = 'Login successful';
 
-          this.router.navigate(['/dashboard']);
+          const role = this.authService.getUserRole();
+          if (role === 'CUSTOMER') {
+            this.router.navigate(['/loads/create']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
       },
 
         error: (error) => {
 
           console.error('Login failed');
           console.error(error);
+          if (error.status === 401) {
+            this.message = 'Invalid username or password';
+          } else {
+            this.message = 'Login failed. Please try again.';
+          }
+            setTimeout(() => {
+          this.message = '';
+        }, 3000);
 
         }
       });

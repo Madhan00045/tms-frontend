@@ -18,7 +18,7 @@ export class CarrierListComponent implements OnInit {
 
   searchTerm: string = '';
   filters: FilterItem[] = [];
-  readonly maxFilters = 3;
+  readonly maxFilters = 2;
 
   availableFilterFields = [
     { value: 'carrierName', label: 'Carrier Name' },

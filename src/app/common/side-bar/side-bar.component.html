@@ -3,7 +3,7 @@
   <div class="sidebar-header">
     <h2>TMS</h2>
     <span>Transport Management</span>
-      <img
+    <img
       src="assets/tms-truck3.svg"
       alt="TMS"
       class="sidebar-truck-icon"
@@ -12,66 +12,121 @@
 
   <nav class="sidebar-menu">
 
-    <a routerLink="/dashboard"
+    <!-- Dashboard: ADMIN, DISPATCHER -->
+    <a *ngIf="authService.canAccessDashboard()"
+       routerLink="/dashboard"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{ exact: true }"
        class="menu-item">
-
       <span class="menu-icon">⌂</span>
       <span>Dashboard</span>
-
     </a>
 
-    <a routerLink="/loads"
+    <!-- Load List: ADMIN, DISPATCHER -->
+    <a *ngIf="authService.canAccessLoadList()"
+       routerLink="/loads"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{ exact: true }"
        class="menu-item">
-
       <span class="menu-icon">▤</span>
       <span>Load List</span>
-
     </a>
 
-    <a routerLink="/loads/create"
+    <!-- Create Load: ADMIN, DISPATCHER, CUSTOMER -->
+    <a *ngIf="authService.canCreateLoad()"
+       routerLink="/loads/create"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{ exact: true }"
        class="menu-item">
-
       <span class="menu-icon">＋</span>
       <span>Create Load</span>
-
     </a>
 
-
-
-    <a routerLink="/customers"
+    <!-- Customers: ADMIN only -->
+    <a *ngIf="authService.canAccessCustomers()"
+       routerLink="/customers"
        routerLinkActive="active"
        class="menu-item">
-
-      <span class="menu-icon">👥</span>
+      <span class="menu-icon">♟</span>
       <span>Customers</span>
-
     </a>
 
-    <a routerLink="/carriers"
+    <!-- Carriers: ADMIN only -->
+    <a *ngIf="authService.canAccessCarriers()"
+       routerLink="/carriers"
        routerLinkActive="active"
        class="menu-item">
-
-      <span class="menu-icon">🚚</span>
+      <span class="menu-icon">▰</span>
       <span>Carriers</span>
-
     </a>
 
-        <a routerLink="/loads/update-status"
+    <!-- Update Load Status: ADMIN, DISPATCHER
+    <a *ngIf="authService.canUpdateLoadStatus()"
+       routerLink="/loads/update-status"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{ exact: true }"
        class="menu-item">
-
       <span class="menu-icon">↻</span>
       <span>Update Load Status</span>
+    </a> -->
 
+    <!-- Tracking: ADMIN, DISPATCHER, CUSTOMER -->
+    <a routerLink="/tracking"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="menu-item">
+      <span class="menu-icon">⌖</span>
+      <span>Tracking</span>
     </a>
 
   </nav>
+
+  <!-- Bottom User Profile Section with Popup Menu -->
+  <div class="sidebar-footer" *ngIf="authService.getToken()">
+
+    <!-- Popup / Dropdown Menu (only visible when opened) -->
+    <div class="profile-popup" *ngIf="isProfilePopupOpen" (click)="$event.stopPropagation()">
+      <div class="popup-user-card">
+        <div class="circular-avatar popup-avatar">
+          {{ getUserInitial() }}
+        </div>
+        <div class="popup-info">
+          <span class="popup-username">{{ authService.getUsername() || 'User' }}</span>
+          <span class="popup-role-badge" [attr.data-role]="authService.getUserRole()">
+            {{ authService.getUserRole() }}
+          </span>
+        </div>
+      </div>
+
+      <div class="popup-divider"></div>
+
+      <button type="button" class="popup-logout-item" (click)="logout()">
+        <svg class="logout-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Logout</span>
+      </button>
+    </div>
+
+    <!-- Closed State Trigger Section -->
+    <div
+      class="user-profile-trigger"
+      (click)="toggleProfilePopup($event)"
+      [class.active]="isProfilePopupOpen"
+      title="Click to open profile menu"
+    >
+      <div class="circular-avatar trigger-avatar">
+        {{ getUserInitial() }}
+      </div>
+      <div class="trigger-user-details">
+        <span class="trigger-username">{{ authService.getUsername() || 'User' }}</span>
+        <span class="trigger-role">{{ authService.getUserRole() }}</span>
+      </div>
+      <span class="trigger-chevron" [class.rotated]="isProfilePopupOpen">▲</span>
+    </div>
+
+  </div>
 
 </div>

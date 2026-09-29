@@ -92,3 +92,14 @@ button {
 
   z-index: 9999;
 }
+
+.required {
+  color: red;
+  font-weight: bold;
+}
+
+.validation-error {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+}

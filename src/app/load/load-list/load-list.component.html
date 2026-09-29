@@ -172,6 +172,7 @@
           <td class="actions-cell">
             <div class="action-buttons">
               <button
+                *ngIf="authService.canEditLoad()"
                 type="button"
                 class="action-btn edit-btn"
                 (click)="openEditModal(load)"
@@ -184,6 +185,7 @@
                 </svg>
               </button>
               <button
+                *ngIf="authService.canDeleteLoad()"
                 type="button"
                 class="action-btn delete-btn"
                 (click)="deleteLoad(load)"

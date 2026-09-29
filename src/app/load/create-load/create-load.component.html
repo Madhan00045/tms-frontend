@@ -20,7 +20,7 @@
       <div class="form-row">
 
         <div class="form-group">
-          <label>Customer</label>
+          <label>Customer <span class="required">*</span></label>
           <select class="form-input-field" formControlName="customerId">
             <option value="">Select Customer</option>
             <option
@@ -29,10 +29,17 @@
               {{ customer.companyName }}
             </option>
           </select>
+
+                  <div
+  class="validation-error"
+  *ngIf="loadForm.get('customerId')?.touched &&
+         loadForm.get('customerId')?.hasError('required')">
+  Customer is required
+</div>
         </div>
 
         <div class="form-group">
-          <label>Carrier</label>
+          <label>Carrier <span class="required">*</span></label>
           <select class="form-input-field" formControlName="carrierId">
             <option value="">Select Carrier</option>
             <option
@@ -41,6 +48,12 @@
               {{ carrier.carrierName }}
             </option>
           </select>
+          <div
+  class="validation-error"
+  *ngIf="loadForm.get('carrierId')?.touched &&
+         loadForm.get('carrierId')?.hasError('required')">
+  Carrier is required
+</div>
         </div>
 
       </div>
@@ -68,19 +81,33 @@
       <div class="form-row">
 
         <div class="form-group">
-          <label>Pickup Location</label>
+          <label>Pickup Location <span class="required">*</span></label>
           <input
             type="text" class="form-input-field"
             formControlName="pickupLocation"
             placeholder="Chennai">
+
+            <div
+  class="validation-error"
+  *ngIf="loadForm.get('pickupLocation')?.touched &&
+         loadForm.get('pickupLocation')?.hasError('required')">
+  Pickup Location is required
+</div>
         </div>
 
         <div class="form-group">
-          <label>Delivery Location</label>
+          <label>Delivery Location <span class="required">*</span></label>
           <input
             type="text" class="form-input-field"
             formControlName="deliveryLocation"
             placeholder="Bangalore">
+
+            <div
+  class="validation-error"
+  *ngIf="loadForm.get('deliveryLocation')?.touched &&
+         loadForm.get('deliveryLocation')?.hasError('required')">
+  Delivery Location is required
+</div>
         </div>
 
       </div>
@@ -88,17 +115,30 @@
       <div class="form-row">
 
         <div class="form-group">
-          <label>Pickup Date</label>
+          <label>Pickup Date <span class="required">*</span></label>
           <input
             type="date" class="form-input-field"
             formControlName="pickupDate">
+            <div
+  class="validation-error"
+  *ngIf="loadForm.get('pickupDate')?.touched &&
+         loadForm.get('pickupDate')?.hasError('required')">
+  Pickup Date is required
+</div>
         </div>
 
         <div class="form-group">
-          <label>Delivery Date</label>
+          <label>Delivery Date <span class="required">*</span></label>
           <input class="form-input-field"
             type="date"
             formControlName="deliveryDate">
+
+            <div
+  class="validation-error"
+  *ngIf="loadForm.get('deliveryDate')?.touched &&
+         loadForm.get('deliveryDate')?.hasError('required')">
+  Delivery Date is required
+</div>
         </div>
 
       </div>
@@ -106,19 +146,31 @@
       <div class="form-row">
 
         <div class="form-group">
-          <label>Weight</label>
+          <label>Weight <span class="required">*</span></label>
           <input
             type="number" class="form-input-field"
             formControlName="weight"
             placeholder="1200.50">
+            <div
+  class="validation-error"
+  *ngIf="loadForm.get('weight')?.touched &&
+         loadForm.get('weight')?.hasError('required')">
+  Weight is required
+</div>
         </div>
 
         <div class="form-group">
-          <label>Pieces</label>
+          <label>Pieces <span class="required">*</span></label>
           <input
             type="number" class="form-input-field"
             formControlName="pieces"
             placeholder="20">
+            <div
+  class="validation-error"
+  *ngIf="loadForm.get('pieces')?.touched &&
+         loadForm.get('pieces')?.hasError('required')">
+  Pieces is required
+</div>
         </div>
 
       </div>

@@ -18,7 +18,7 @@ export class CustomerListComponent implements OnInit {
 
   searchTerm: string = '';
   filters: FilterItem[] = [];
-  readonly maxFilters = 3;
+  readonly maxFilters = 2;
 
   availableFilterFields = [
     { value: 'companyName', label: 'Company Name' },
