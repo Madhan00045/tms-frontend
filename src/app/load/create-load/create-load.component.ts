@@ -85,7 +85,7 @@ export class CreateLoadComponent implements OnInit {
       });
   }
   loadCustomers(): void {
-  this.customerService.getCustomers().subscribe({
+  this.customerService.getCustomersLookup().subscribe({
     next: (data) => {
       this.customers = data;
     },
@@ -96,7 +96,7 @@ export class CreateLoadComponent implements OnInit {
 }
 
 loadCarriers(): void {
-  this.carrierService.getCarriers().subscribe({
+  this.carrierService.getCarrierLookup().subscribe({
     next: (data) => {
       this.carriers = data;
     },

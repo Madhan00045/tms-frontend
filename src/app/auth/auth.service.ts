@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PermissionService } from './permission.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,10 @@ export class AuthService {
 
   private apiUrl = '/api/secure-test';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private permissionService: PermissionService
+  ) {}
 
   testProtectedApi(): Observable<string> {
     return this.http.get(this.apiUrl, {
@@ -63,34 +67,34 @@ export class AuthService {
   }
 
   canAccessDashboard(): boolean {
-    return this.isAdmin() || this.isDispatcher();
+    return this.permissionService.has('DASHBOARD');
   }
 
   canAccessLoadList(): boolean {
-    return this.isAdmin() || this.isDispatcher();
+    return this.permissionService.has('LOAD_LIST');
   }
 
   canCreateLoad(): boolean {
-    return this.isAdmin() || this.isDispatcher() || this.isCustomer();
+    return this.permissionService.has('CREATE_LOAD');
   }
 
   canEditLoad(): boolean {
-    return this.isAdmin() || this.isDispatcher();
+    return this.permissionService.has('EDIT_LOAD');
   }
 
   canDeleteLoad(): boolean {
-    return this.isAdmin() || this.isDispatcher();
+    return this.permissionService.has('DELETE_LOAD');
   }
 
   canUpdateLoadStatus(): boolean {
-    return this.isAdmin() || this.isDispatcher();
+    return this.permissionService.has('UPDATE_LOAD_STATUS');
   }
 
   canAccessCustomers(): boolean {
-    return this.isAdmin();
+    return this.permissionService.has('CUSTOMERS');
   }
 
   canAccessCarriers(): boolean {
-    return this.isAdmin();
+    return this.permissionService.has('CARRIERS');
   }
 }

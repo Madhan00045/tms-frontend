@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from './login.service';
 import { AuthService } from '../auth.service';
+import { PermissionService } from '../permission.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -18,6 +19,7 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private loginService: LoginService,
     private authService: AuthService,
+    private permissionService: PermissionService,
     private router: Router
   ) {}
 
@@ -41,7 +43,7 @@ export class LoginComponent implements OnInit {
     this.loginService
       .login(username, password)
       .subscribe({
-      next: (response) => {
+        next: (response) => {
 
           console.log('JWT received:');
           console.log(response.token);
@@ -53,13 +55,31 @@ export class LoginComponent implements OnInit {
 
           this.message = 'Login successful';
 
-          const role = this.authService.getUserRole();
-          if (role === 'CUSTOMER') {
-            this.router.navigate(['/loads/create']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
-      },
+          // Fetch user permissions and menu from database
+          this.permissionService.loadPermissions().subscribe({
+            next: () => {
+              this.permissionService.loadMenu().subscribe();
+              if (this.permissionService.has('DASHBOARD')) {
+                this.router.navigate(['/dashboard']);
+              } else if (this.permissionService.has('LOAD_LIST')) {
+                this.router.navigate(['/loads']);
+              } else if (this.permissionService.has('CREATE_LOAD')) {
+                this.router.navigate(['/loads/create']);
+              } else if (this.permissionService.has('TRACKING')) {
+                this.router.navigate(['/tracking']);
+              } else if (this.permissionService.has('CUSTOMERS')) {
+                this.router.navigate(['/customers']);
+              } else if (this.permissionService.has('CARRIERS')) {
+                this.router.navigate(['/carriers']);
+              } else {
+                this.router.navigate(['/dashboard']);
+              }
+            },
+            error: () => {
+              this.router.navigate(['/dashboard']);
+            }
+          });
+        },
 
         error: (error) => {
 

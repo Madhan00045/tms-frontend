@@ -11,74 +11,16 @@
   </div>
 
   <nav class="sidebar-menu">
-
-    <!-- Dashboard: ADMIN, DISPATCHER -->
-    <a *ngIf="authService.canAccessDashboard()"
-       routerLink="/dashboard"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }"
-       class="menu-item">
-      <span class="menu-icon">⌂</span>
-      <span>Dashboard</span>
-    </a>
-
-    <!-- Load List: ADMIN, DISPATCHER -->
-    <a *ngIf="authService.canAccessLoadList()"
-       routerLink="/loads"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }"
-       class="menu-item">
-      <span class="menu-icon">▤</span>
-      <span>Load List</span>
-    </a>
-
-    <!-- Create Load: ADMIN, DISPATCHER, CUSTOMER -->
-    <a *ngIf="authService.canCreateLoad()"
-       routerLink="/loads/create"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }"
-       class="menu-item">
-      <span class="menu-icon">＋</span>
-      <span>Create Load</span>
-    </a>
-
-    <!-- Customers: ADMIN only -->
-    <a *ngIf="authService.canAccessCustomers()"
-       routerLink="/customers"
-       routerLinkActive="active"
-       class="menu-item">
-      <span class="menu-icon">♟</span>
-      <span>Customers</span>
-    </a>
-
-    <!-- Carriers: ADMIN only -->
-    <a *ngIf="authService.canAccessCarriers()"
-       routerLink="/carriers"
-       routerLinkActive="active"
-       class="menu-item">
-      <span class="menu-icon">▰</span>
-      <span>Carriers</span>
-    </a>
-
-    <!-- Update Load Status: ADMIN, DISPATCHER
-    <a *ngIf="authService.canUpdateLoadStatus()"
-       routerLink="/loads/update-status"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }"
-       class="menu-item">
-      <span class="menu-icon">↻</span>
-      <span>Update Load Status</span>
-    </a> -->
-
-    <!-- Tracking: ADMIN, DISPATCHER, CUSTOMER -->
-    <a routerLink="/tracking"
-       routerLinkActive="active"
-       [routerLinkActiveOptions]="{ exact: true }"
-       class="menu-item">
-      <span class="menu-icon">⌖</span>
-      <span>Tracking</span>
-    </a>
-
+    <!-- Dynamic Menu generated from Database permissions via GET /api/menu -->
+    <ng-container *ngFor="let item of menuItems">
+      <a [routerLink]="item.route"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' || item.route === '/loads' || item.route === '/tracking' }"
+         class="menu-item">
+        <span class="menu-icon">{{ getIcon(item) }}</span>
+        <span>{{ item.name }}</span>
+      </a>
+    </ng-container>
   </nav>
 
   <!-- Bottom User Profile Section with Popup Menu -->

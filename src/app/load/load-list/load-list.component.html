@@ -172,7 +172,7 @@
           <td class="actions-cell">
             <div class="action-buttons">
               <button
-                *ngIf="authService.canEditLoad()"
+                *ngIf="permissionService.has('EDIT_LOAD')"
                 type="button"
                 class="action-btn edit-btn"
                 (click)="openEditModal(load)"
@@ -185,7 +185,7 @@
                 </svg>
               </button>
               <button
-                *ngIf="authService.canDeleteLoad()"
+                *ngIf="permissionService.has('DELETE_LOAD')"
                 type="button"
                 class="action-btn delete-btn"
                 (click)="deleteLoad(load)"

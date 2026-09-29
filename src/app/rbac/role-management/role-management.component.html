@@ -1,0 +1,141 @@
+<div class="rbac-container">
+
+  <!-- Header -->
+  <div class="header-section">
+    <div class="title-row">
+      <div>
+        <h1>Role Management</h1>
+        <p class="subtitle">Configure and manage database-driven functionality permissions per role</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <span>✔</span> {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <span>⚠</span> {{ errorMessage }}
+  </div>
+
+  <!-- Role Selector Card -->
+  <div class="card selector-card">
+    <div class="selector-row">
+      <div class="selector-group">
+        <label for="roleSelect" class="selector-label">Select Role:</label>
+        <div class="select-wrapper">
+          <select
+            id="roleSelect"
+            class="form-select"
+            [(ngModel)]="selectedRoleId"
+            (change)="onRoleChange()"
+            [disabled]="isLoadingRoles || isSaving"
+          >
+            <option *ngFor="let role of roles" [value]="role.id">
+              {{ role.roleName }} ({{ role.roleCode }})
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="stats-group" *ngIf="functionalities.length > 0">
+        <span class="badge badge-info">
+          {{ getSelectedCount() }} of {{ functionalities.length }} Functionalities Assigned
+        </span>
+      </div>
+
+      <div class="action-buttons-group">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          (click)="selectAll()"
+          [disabled]="isLoadingFunctionalities || isSaving"
+        >
+          Select All
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          (click)="deselectAll()"
+          [disabled]="isLoadingFunctionalities || isSaving"
+        >
+          Deselect All
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="savePermissions()"
+          [disabled]="isLoadingFunctionalities || isSaving || !selectedRoleId"
+        >
+          <span *ngIf="isSaving" class="spinner"></span>
+          {{ isSaving ? 'Saving...' : 'Save Permissions' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Functionalities List Card -->
+  <div class="card content-card">
+    <div class="card-header-bar">
+      <h3>Assign Functionalities</h3>
+      <span class="subtext">Check the functionalities this role is allowed to access</span>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoadingFunctionalities" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading role permissions...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoadingFunctionalities && functionalities.length === 0" class="empty-state">
+      <p>No functionalities found.</p>
+    </div>
+
+    <!-- Grid of Functionality Checkboxes -->
+    <div *ngIf="!isLoadingFunctionalities && functionalities.length > 0" class="func-grid">
+      <div
+        *ngFor="let func of functionalities"
+        class="func-card"
+        [class.selected]="func.assigned"
+        (click)="toggleFunctionality(func)"
+      >
+        <div class="func-checkbox-wrapper">
+          <input
+            type="checkbox"
+            [id]="'func-' + func.id"
+            [checked]="func.assigned"
+            (click)="$event.stopPropagation()"
+            (change)="toggleFunctionality(func)"
+          />
+        </div>
+        <div class="func-details">
+          <div class="func-header">
+            <span class="func-title">{{ func.functionalityName }}</span>
+            <span class="func-code-badge">{{ func.functionalityCode }}</span>
+          </div>
+          <p class="func-desc" *ngIf="func.description">{{ func.description }}</p>
+          <span class="func-type" *ngIf="func.functionalityType">{{ func.functionalityType }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Save Action Bar -->
+    <div class="card-footer-bar" *ngIf="!isLoadingFunctionalities && functionalities.length > 0">
+      <div class="footer-stats">
+        <strong>{{ getSelectedCount() }}</strong> functionalities selected
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="savePermissions()"
+        [disabled]="isSaving || !selectedRoleId"
+      >
+        <span *ngIf="isSaving" class="spinner"></span>
+        {{ isSaving ? 'Saving...' : 'Save Permissions' }}
+      </button>
+    </div>
+
+  </div>
+
+</div>

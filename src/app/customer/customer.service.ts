@@ -38,6 +38,10 @@ export class CustomerService {
     return this.http.get<Customer[]>(this.apiUrl);
   }
 
+  getCustomersLookup() {
+  return this.http.get<any[]>('/api/customers/lookup');
+}
+
   // Used by Customer List with server-side pagination, search, and up to 3 filters
   getCustomersPaginated(
     page: number,

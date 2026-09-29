@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthService } from './auth.service';
+import { PermissionService } from './permission.service';
+import { Observable, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +12,11 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private permissionService: PermissionService
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
     const token = this.authService.getToken();
 
@@ -26,6 +30,7 @@ export class AuthGuard implements CanActivate {
 
       if (!payload) {
         localStorage.removeItem('jwtToken');
+        this.permissionService.clearPermissions();
         this.router.navigate(['/login']);
         return false;
       }
@@ -34,31 +39,60 @@ export class AuthGuard implements CanActivate {
 
       if (payload.exp && payload.exp < currentTime) {
         localStorage.removeItem('jwtToken');
+        this.permissionService.clearPermissions();
         this.router.navigate(['/login']);
         return false;
       }
 
-      // Check role permissions if specified in route data
-      const expectedRoles: string[] = route.data && route.data['roles'];
-      if (expectedRoles && expectedRoles.length > 0) {
-        const userRole = this.authService.getUserRole();
-        if (!userRole || !expectedRoles.includes(userRole)) {
-          // Insufficient role: redirect to permitted landing page
-          if (userRole === 'CUSTOMER') {
-            this.router.navigate(['/loads/create']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
-          return false;
-        }
+      // If permissions are not yet in memory or storage, fetch them from database
+      if (this.permissionService.getPermissions().length === 0) {
+        return this.permissionService.loadPermissions().pipe(
+          tap(() => this.permissionService.loadMenu().subscribe()),
+          map(() => this.evaluateRouteAccess(route)),
+          catchError(() => {
+            return of(this.evaluateRouteAccess(route));
+          })
+        );
       }
 
-      return true;
+      return this.evaluateRouteAccess(route);
 
     } catch (error) {
       localStorage.removeItem('jwtToken');
+      this.permissionService.clearPermissions();
       this.router.navigate(['/login']);
       return false;
+    }
+  }
+
+  private evaluateRouteAccess(route: ActivatedRouteSnapshot): boolean {
+    const requiredPermission = route.data && route.data['permission'];
+    if (requiredPermission) {
+      if (this.permissionService.has(requiredPermission)) {
+        return true;
+      }
+      this.redirectToPermittedRoute();
+      return false;
+    }
+
+    return true;
+  }
+
+  private redirectToPermittedRoute(): void {
+    if (this.permissionService.has('DASHBOARD')) {
+      this.router.navigate(['/dashboard']);
+    } else if (this.permissionService.has('LOAD_LIST')) {
+      this.router.navigate(['/loads']);
+    } else if (this.permissionService.has('CREATE_LOAD')) {
+      this.router.navigate(['/loads/create']);
+    } else if (this.permissionService.has('TRACKING')) {
+      this.router.navigate(['/tracking']);
+    } else if (this.permissionService.has('CUSTOMERS')) {
+      this.router.navigate(['/customers']);
+    } else if (this.permissionService.has('CARRIERS')) {
+      this.router.navigate(['/carriers']);
+    } else {
+      this.router.navigate(['/login']);
     }
   }
 }

@@ -4,6 +4,7 @@ import { LoadService, Load, FilterItem, EditLoadInfoRequest } from '../load.serv
 import { CustomerService, Customer } from '../../customer/customer.service';
 import { CarrierService, Carrier } from '../../carrier/carrier.service';
 import { AuthService } from '../../auth/auth.service';
+import { PermissionService } from '../../auth/permission.service';
 
 @Component({
   selector: 'app-load-list',
@@ -78,6 +79,7 @@ export class LoadListComponent implements OnInit {
     private customerService: CustomerService,
     private carrierService: CarrierService,
     public authService: AuthService,
+    public permissionService: PermissionService,
     private router: Router
   ) {}
 

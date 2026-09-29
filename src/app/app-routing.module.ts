@@ -13,6 +13,8 @@ import { CarrierListComponent } from './carrier/carrier-list/carrier-list.compon
 import { CarrierCreateComponent } from './carrier/carrier-create/carrier-create.component';
 import { CarrierEditComponent } from './carrier/carrier-edit/carrier-edit.component';
 import { TrackingComponent } from './load/tracking/tracking.component';
+import { RoleManagementComponent } from './rbac/role-management/role-management.component';
+import { UserRoleMappingComponent } from './rbac/user-role-mapping/user-role-mapping.component';
 import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
@@ -29,73 +31,85 @@ const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DISPATCHER'] }
+    data: { permission: 'DASHBOARD' }
   },
   {
     path: 'loads/create',
     component: CreateLoadComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DISPATCHER', 'CUSTOMER'] }
+    data: { permission: 'CREATE_LOAD' }
   },
   {
     path: 'loads',
     component: LoadListComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DISPATCHER'] }
+    data: { permission: 'LOAD_LIST' }
   },
   {
     path: 'loads/edit/:id',
     component: EditLoadComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DISPATCHER'] }
+    data: { permission: 'EDIT_LOAD' }
   },
   {
     path: 'loads/update-status',
     component: UpdateLoadStatusComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DISPATCHER'] }
+    data: { permission: 'UPDATE_LOAD_STATUS' }
   },
   {
     path: 'customers',
     component: CustomerListComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { permission: 'CUSTOMERS' }
   },
   {
     path: 'customers/create',
     component: CustomerCreateComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { permission: 'CUSTOMERS' }
   },
   {
     path: 'customers/edit/:id',
     component: CustomerEditComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { permission: 'CUSTOMERS' }
   },
   {
     path: 'carriers',
     component: CarrierListComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { permission: 'CARRIERS' }
   },
   {
     path: 'carriers/create',
     component: CarrierCreateComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { permission: 'CARRIERS' }
   },
   {
     path: 'carriers/edit/:id',
     component: CarrierEditComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN'] }
+    data: { permission: 'CARRIERS' }
   },
   {
     path: 'tracking',
     component: TrackingComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['ADMIN', 'DISPATCHER', 'CUSTOMER'] }
+    data: { permission: 'TRACKING' }
+  },
+  {
+    path: 'role-management',
+    component: RoleManagementComponent,
+    canActivate: [AuthGuard],
+    data: { permission: 'ROLE_MANAGEMENT' }
+  },
+  {
+    path: 'user-role-mapping',
+    component: UserRoleMappingComponent,
+    canActivate: [AuthGuard],
+    data: { permission: 'USER_ROLE_MAPPING' }
   }
 ];
 

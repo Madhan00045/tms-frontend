@@ -23,7 +23,8 @@ import { CarrierListComponent } from './carrier/carrier-list/carrier-list.compon
 import { CarrierCreateComponent } from './carrier/carrier-create/carrier-create.component';
 import { CarrierEditComponent } from './carrier/carrier-edit/carrier-edit.component';
 import { TrackingComponent } from './load/tracking/tracking.component';
-
+import { RoleManagementComponent } from './rbac/role-management/role-management.component';
+import { UserRoleMappingComponent } from './rbac/user-role-mapping/user-role-mapping.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,9 @@ import { TrackingComponent } from './load/tracking/tracking.component';
     CarrierListComponent,
     CarrierCreateComponent,
     CarrierEditComponent,
-    TrackingComponent
+    TrackingComponent,
+    RoleManagementComponent,
+    UserRoleMappingComponent
   ],
   imports: [
     BrowserModule,

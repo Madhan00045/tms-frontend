@@ -38,6 +38,10 @@ export class CarrierService {
     return this.http.get<Carrier[]>(this.apiUrl);
   }
 
+  getCarrierLookup() {
+  return this.http.get<any[]>('/api/carriers/lookup');
+}
+
   // Used by Carrier List with server-side pagination, search, and up to 3 filters
   getCarriersPaginated(
     page: number,

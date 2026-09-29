@@ -1,0 +1,199 @@
+<div class="rbac-container">
+
+  <!-- Header -->
+  <div class="header-section">
+    <div class="title-row">
+      <div>
+        <h1>User Role Mapping</h1>
+        <p class="subtitle">Assign users to roles using database-driven RBAC mapping</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <span>✔</span> {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <span>⚠</span> {{ errorMessage }}
+  </div>
+
+  <!-- Role Selector Card -->
+  <div class="card selector-card">
+    <div class="selector-row">
+      <div class="selector-group">
+        <label for="roleSelect" class="selector-label">Role:</label>
+        <div class="select-wrapper">
+          <select
+            id="roleSelect"
+            class="form-select"
+            [(ngModel)]="selectedRoleId"
+            (change)="onRoleChange()"
+            [disabled]="isLoadingRoles || isSaving"
+          >
+            <option *ngFor="let role of roles" [value]="role.id">
+              {{ role.roleName }} ({{ role.roleCode }})
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="action-buttons-group">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="saveMappings()"
+          [disabled]="isLoadingUsers || isSaving || !selectedRoleId"
+        >
+          <span *ngIf="isSaving" class="spinner"></span>
+          {{ isSaving ? 'Saving...' : 'Save Mappings' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dual List Transfer Box -->
+  <div class="card content-card">
+
+    <div *ngIf="isLoadingUsers" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading user mappings...</p>
+    </div>
+
+    <div *ngIf="!isLoadingUsers" class="transfer-container">
+
+      <!-- LEFT BOX: Unmapped Users -->
+      <div class="transfer-box">
+        <div class="transfer-header">
+          <div class="header-title-bar">
+            <h4>Unmapped Users</h4>
+            <span class="count-pill">{{ filteredUnmappedUsers.length }}</span>
+          </div>
+          <div class="box-actions">
+            <button type="button" class="link-btn" (click)="selectAllUnmapped()">Select All</button>
+            <span class="sep">|</span>
+            <button type="button" class="link-btn" (click)="deselectAllUnmapped()">Clear</button>
+          </div>
+          <div class="search-box">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Filter unmapped users..."
+              [(ngModel)]="searchUnmapped"
+            />
+          </div>
+        </div>
+
+        <div class="transfer-list">
+          <div *ngIf="filteredUnmappedUsers.length === 0" class="empty-list-notice">
+            No unmapped users
+          </div>
+          <div
+            *ngFor="let user of filteredUnmappedUsers"
+            class="transfer-item"
+            [class.selected]="selectedUnmappedUserIds.has(user.id)"
+            (click)="toggleUnmappedSelection(user.id)"
+          >
+            <input
+              type="checkbox"
+              [checked]="selectedUnmappedUserIds.has(user.id)"
+              (click)="$event.stopPropagation()"
+              (change)="toggleUnmappedSelection(user.id)"
+            />
+            <div class="item-user-info">
+              <span class="item-username">{{ user.username }}</span>
+              <span class="item-current-role" *ngIf="user.role">Currently: {{ user.role }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIDDLE CONTROLS: Transfer Arrows -->
+      <div class="transfer-controls">
+        <button
+          type="button"
+          class="btn-arrow"
+          (click)="moveToMapped()"
+          [disabled]="selectedUnmappedUserIds.size === 0"
+          title="Assign selected users to this role"
+        >
+          &gt;
+        </button>
+        <button
+          type="button"
+          class="btn-arrow"
+          (click)="moveToUnmapped()"
+          [disabled]="selectedMappedUserIds.size === 0"
+          title="Remove selected users from this role"
+        >
+          &lt;
+        </button>
+      </div>
+
+      <!-- RIGHT BOX: Mapped Users -->
+      <div class="transfer-box">
+        <div class="transfer-header">
+          <div class="header-title-bar">
+            <h4>Mapped Users</h4>
+            <span class="count-pill active">{{ filteredMappedUsers.length }}</span>
+          </div>
+          <div class="box-actions">
+            <button type="button" class="link-btn" (click)="selectAllMapped()">Select All</button>
+            <span class="sep">|</span>
+            <button type="button" class="link-btn" (click)="deselectAllMapped()">Clear</button>
+          </div>
+          <div class="search-box">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Filter mapped users..."
+              [(ngModel)]="searchMapped"
+            />
+          </div>
+        </div>
+
+        <div class="transfer-list">
+          <div *ngIf="filteredMappedUsers.length === 0" class="empty-list-notice">
+            No users mapped to this role
+          </div>
+          <div
+            *ngFor="let user of filteredMappedUsers"
+            class="transfer-item"
+            [class.selected]="selectedMappedUserIds.has(user.id)"
+            (click)="toggleMappedSelection(user.id)"
+          >
+            <input
+              type="checkbox"
+              [checked]="selectedMappedUserIds.has(user.id)"
+              (click)="$event.stopPropagation()"
+              (change)="toggleMappedSelection(user.id)"
+            />
+            <div class="item-user-info">
+              <span class="item-username">{{ user.username }}</span>
+              <span class="item-badge-role">Mapped</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Save Action Bar -->
+    <div class="card-footer-bar" *ngIf="!isLoadingUsers">
+      <div class="footer-stats">
+        <strong>{{ mappedUsers.length }}</strong> user(s) currently mapped to selected role
+      </div>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="saveMappings()"
+        [disabled]="isSaving || !selectedRoleId"
+      >
+        <span *ngIf="isSaving" class="spinner"></span>
+        {{ isSaving ? 'Saving...' : 'Save' }}
+      </button>
+    </div>
+
+  </div>
+
+</div>
